@@ -1,7 +1,6 @@
 import java.util.Scanner;
 
 public class RushHour2 {
-	private int score[] = {}; 
 	
 	public static void main(String [] args)
     { 
@@ -52,50 +51,15 @@ public class RushHour2 {
 				reponseConfiguration = sc.nextInt();
 			}while(reponseConfiguration > tableauNbConfiguration[reponseNiveau]);			
 			
-		}
+		}	
 		
-		
-		ParkingFactory parking = new ParkingFactory();
-		Player player = new Player();
-
 		reponseNiveau = reponseNiveau == 0 ? (int)((Math.random()*10)%3)+1: reponseNiveau;
 		reponseConfiguration = reponseConfiguration == 0 ? (int)((Math.random()*10)%tableauNbConfiguration[reponseNiveau])+1: reponseConfiguration;
-		player.play(reponseNiveau, reponseConfiguration, parking);
-		
-		
-		
-		//parkingFactory.chargerFichier(pseudo);
-		
-		
-		
-		
-		/*
-    	//creation du parking (plateau de jeu + espace de stockage des vehicules)
-    	Parking p = new Parking ();
 
-	//creation des vehicules
-    	p.addVehicule("X", 2, 1, 1, 2, "red");
-    	p.addVehicule("A", 2, 1, 1, 3, "green");
-    	p.addVehicule("B", 1, 2, 1, 4, "orange");
-    	p.addVehicule("C", 2, 1, 2, 5, "blue");
-    	p.addVehicule("O", 1, 3, 3, 2, "yellow");
-    	p.addVehicule("P", 1, 3, 5, 3, "purple");
-
-    	//succession de deplacement de vehicule
-    	p.move("PU3");
-    	p.move("OU2");
-    	p.move("CR2");
-    	p.move("AR3");
-    	p.move("OD3");
-    	p.move("XR1");
-    	p.move("BU4");
-    	p.move("XL1");
-    	p.move("OU3");
-    	p.move("CL3");
-    	p.move("AL3");
-    	p.move("PD3");
-    	p.move("OD3");
-    	p.move("XR5");
-    	*/
+		
+		ParkingFactory parking = new ParkingFactory(reponseNiveau, reponseConfiguration);
+		
+		Player player = new Player();
+		player.play(parking);
     }
 }
