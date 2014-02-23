@@ -34,7 +34,7 @@ public class Player {
     public void setScore (int complexity, int configuration, int newscore)
     {
         // Finds the position of the score of the level before the one you want to register in the ArrayList
-        int position=-1;
+        int position=-3;
         boolean exists=false;
         for (int i=0; i<score.size(); i+=3)
         {
@@ -163,8 +163,8 @@ public class Player {
      * 
      * @param parking 
      */           
-    public void play(ParkingFactory parking)
+    public void play()
     {
-		
+        
     }
 }
