@@ -57,9 +57,8 @@ public class RushHour2 {
 		reponseConfiguration = reponseConfiguration == 0 ? (int)((Math.random()*10)%tableauNbConfiguration[reponseNiveau])+1: reponseConfiguration;
 
 		
-		ParkingFactory parking = new ParkingFactory(reponseNiveau, reponseConfiguration);
-		
-		Player player = new Player();
-		player.play(parking);
+		ParkingFactory pf = new ParkingFactory(reponseNiveau, reponseConfiguration);
+		Player player = new Player(pseudo);
+		player.play(pf.getParking());
     }
 }

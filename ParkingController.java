@@ -81,7 +81,7 @@ public class ParkingController{
  	System.out.println(" || DIREC ||");
      System.out.println("vehi : " + v.getDirection());
      System.out.println("ordre : " + order);
-     ret = (v.getDirection().equals(Constants.HORIZONTAL))?((order.equals("L")||order.equals("R"))?true:false):((order.equals("D")||order.equals("U"))?true:false);
+     ret = (v.getDirection().equals(Constants.HORIZONTAL))?((order.equals(Constants.LEFT)||order.equals(Constants.RIGHT))?true:false):((order.equals(Constants.DOWN)||order.equals(Constants.UP))?true:false);
      System.out.println("returns : " +Boolean.toString(ret));
       return ret;
    }

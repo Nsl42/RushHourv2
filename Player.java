@@ -1,4 +1,3 @@
-package rush.hour;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -163,8 +162,14 @@ public class Player {
      * 
      * @param parking 
      */           
-    public void play()
+    public void play(Parking parking)
     {
-        
+       while(parking.getVehicule("X").getXPosition() != 184)
+       {
+	  System.out.println("Enter Your Move : ");
+	  Scanner sc = new Scanner(System.in);
+	  String move = sc.nextLine();
+	  parking.move(move);
+       } 
     }
 }
