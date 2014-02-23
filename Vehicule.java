@@ -28,14 +28,14 @@ public class Vehicule extends Rectangle
 	/** Getter method for Direction parameter
 	 * @return char direc the Direction
 	 **/
-    public char getDirection()
+    public String getDirection()
     {
        return this.direction;
       }
 	/** Getter method for size parameter
 	 * @return char size the size
 	 **/
-    public char getSize()
+    public int getSize()
     {
        return this.size;
       }

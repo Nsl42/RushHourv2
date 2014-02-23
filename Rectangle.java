@@ -48,7 +48,7 @@ public class Rectangle
     {
        return this.xPosition;
     }
-    public int getYPostion()
+    public int getYPosition()
     {
        return this.yPosition;
     }
@@ -92,12 +92,12 @@ public class Rectangle
      */
     public boolean isOverlapping(Rectangle rect2)
     {
-   	if ((this getXPosition() > (rect2.getXPosition() + rect2.width)) ||
-        	 ((this.getXPosition() + rectA.width) < rect2.getXPosition()))
+   	if ((this.getXPosition() > (rect2.getXPosition() + rect2.width)) ||
+        	 ((this.getXPosition() + rect2.width) < rect2.getXPosition()))
       		return false;
 
    if ((this.getYPosition() > (rect2.getYPosition() + rect2.height)) ||
-         ((this.getYPosition() + rectA.height) < rect2.getYPosition()))
+         ((this.getYPosition() + rect2.height) < rect2.getYPosition()))
       return false;
    return true;
 }

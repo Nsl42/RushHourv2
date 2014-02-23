@@ -1,3 +1,4 @@
+import java.util.Set;
 /** ParkingController, the class which performs all the checks on the vehicule's moves **/
 
 public class ParkingController{ 
@@ -17,38 +18,38 @@ public class ParkingController{
    public boolean chkdist(String move)
    {
       boolean ret = true;
-      Vehicule v = this.park.vehicules.get(move.charAt(0));
+      Vehicule v = this.park.vehicules.get(move.substring(0,1));
       switch (v.getDirection())
       {
 	 case Constants.HORIZONTAL:
-	    switch (move.charAt(1))
+	    switch (move.substring(1,1))
 	    {
 	       case Constants.LEFT:
-		  int newx = v.getXPosition - Character.getNumericValue(move.charAt(2))*Constants.SQUARE;
+		  int newx = v.getXPosition() - Integer.parseInt(move.substring(2,1))*Constants.SQUARE;
 		  if(newx < 0)
 		     ret = false;
 		  break;
 	       case Constants.RIGHT:
 		  int  bx= v.getXPosition()+(Constants.SQUARE * v.getSize());
-		  int newbx = bx + Character.getNumericValue(move.charAt(2))*Constants.SQUARE;
+		  int newbx = bx + Integer.parseInt(move.substring(2,1))*Constants.SQUARE;
 		  if(newbx > Constants.SIZE)
 		     ret = false;
-		  if(move.charAt(0) == "X")
+		  if(move.substring(0,1) == "X")
 		     ret = true;
 		  break;
 	    } 
 	    break;
 	 case Constants.VERTICAL:
-	    switch (move.charAt(1))
+	    switch (move.substring(1,1))
 	    {
 	       case Constants.UP:
-		  int newy = v.getYPosition() - Character.getNumericValue(move.charAt(2)*Constants.SQUARE);
+		  int newy = v.getYPosition() - Integer.parseInt(move.substring(2,1))*Constants.SQUARE;
 		  if(newy <0)
 		     ret = false;
 		  break;
 	       case Constants.DOWN:
 		  int  cy= v.getYPosition()+(Constants.SQUARE * v.getSize());
-		  int newcy = cy + Character.getNumericValue(move.charAt(2)*Constants.SQUARE);
+		  int newcy = cy + Integer.parseInt(move.substring(2,1))*Constants.SQUARE;
 		  if(newcy > Constants.SIZE)
 		     ret = false;
 		  break;
@@ -65,9 +66,9 @@ public class ParkingController{
    public boolean chkDirec(String move)
    {
       boolean ret;
-      Vehicule v = this.park.vehicules.get(move.charat(0));
-      char order = move.charat(1);
-      (v.getDirection() == order) ? ret = true : ret = false;
+      Vehicule v = this.park.vehicules.get(move.substring(0,1));
+      String order = move.substring(1,1);
+     ret = (v.getDirection() == order) ? true :  false;
       return ret;
    }
 
@@ -78,22 +79,22 @@ public class ParkingController{
    public boolean chkCollision(String move)
    {
       boolean ret = true;
-      Vehicule v = this.park.vehicules.get(move.charat(0));
-      Vehicule ghost = new Vehicule("g", (v.getDirection == Constants.HORIZONTAL)? v.getSize:1,(v.getDirection == Constants.VERTICAL)? v.getSize:1, v.getXPosition(), v.getYPosition(), "none");
+      Vehicule v = this.park.vehicules.get(move.substring(0,1));
+      Vehicule ghost = new Vehicule("g", (v.getDirection()== Constants.HORIZONTAL)? v.getSize():1,(v.getDirection() == Constants.VERTICAL)? v.getSize():1, v.getXPosition(), v.getYPosition(), "none");
       ghost.makeInvisible();
-      Set keys = park.keyset();
+      Set<String> keys = park.vehicules.keySet();
       switch(v.getDirection())
       {
-	 case Constants.HORIZONTAL:
-	    switch(move.charAt(1))
+	 case Constants.VERTICAL:
+	    switch(move.substring(1,1))
 	    {
 	       case Constants.UP:
-		  for(int i = 1; i < Character.getNumericValue(move.charAt(2)); i++)
+		  for(int i = 1; i < Integer.parseInt(move.substring(2,1)); i++)
 		  {
-		     ghost.moveVertical(-i)*Constants.SQUARE);
-		     for(String key : keys)
+		     ghost.moveVertical(-i*Constants.SQUARE);
+		     for( String key : keys)
 		     {
-			if(ghost.isOverlapping(park.get(key)))
+			if(ghost.isOverlapping(park.vehicules.get(key)))
 			{
 			   ret = false;
 			}
@@ -102,12 +103,12 @@ public class ParkingController{
 		  }
 		  break;
 	       case Constants.DOWN:
-		  for(int i = 1; i < Character.getNumericValue(move.charAt(2)); i++)
+		  for(int i = 1; i < Integer.parseInt(move.substring(2,1)); i++)
 		  {
-		     ghost.moveVertical(i)*Constants.SQUARE);
+		     ghost.moveVertical(i*Constants.SQUARE);
 		     for(String key : keys)
 		     {
-			if(ghost.isOverlapping(park.get(key)))
+			if(ghost.isOverlapping(park.vehicules.get(key)))
 			{
 			   ret = false;
 			}
@@ -118,15 +119,15 @@ public class ParkingController{
 	    }
 	    break;
 	 case Constants.HORIZONTAL:
-	    switch(move.charAt(1))
+	    switch(move.substring(1,1))
 	    {
 	       case Constants.LEFT:
-		  for(int i = 1; i < Character.getNumericValue(move.charAt(2)); i++)
+		  for(int i = 1; i < Integer.parseInt(move.substring(2,1)); i++)
 		  {
-		     ghost.moveHorizontal(-i)*Constants.SQUARE);
+		     ghost.moveHorizontal(-i*Constants.SQUARE);
 		     for(String key : keys)
 		     {
-			if(ghost.isOverlapping(park.get(key)))
+			if(ghost.isOverlapping(park.vehicules.get(key)))
 			{
 			   ret = false;
 			}
@@ -135,12 +136,12 @@ public class ParkingController{
 		  }
 		  break;
 	       case Constants.RIGHT:
-		  for(int i = 1; i < Character.getNumericValue(move.charAt(2)); i++)
+		  for(int i = 1; i < Integer.parseInt(move.substring(2,1)); i++)
 		  {
-		     ghost.moveHorizontal(i)*Constants.SQUARE);
+		     ghost.moveHorizontal(i*Constants.SQUARE);
 		     for(String key : keys)
 		     {
-			if(ghost.isOverlapping(park.get(key)))
+			if(ghost.isOverlapping(park.vehicules.get(key)))
 			{
 			   ret = false;
 			}
