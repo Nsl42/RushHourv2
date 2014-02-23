@@ -53,6 +53,17 @@ public class Rectangle
        return this.yPosition;
     }
     /**
+     * Width/Height getters.
+     */
+    public int getWidth()
+    {
+       return this.width;
+    }
+    public int getHeight()
+    {
+       return this.height;
+    }
+    /**
      * name getter.
      */
     public String getText()
@@ -92,12 +103,12 @@ public class Rectangle
      */
     public boolean isOverlapping(Rectangle rect2)
     {
-   	if ((this.getXPosition() > (rect2.getXPosition() + rect2.width)) ||
-        	 ((this.getXPosition() + rect2.width) < rect2.getXPosition()))
+   	if ((this.getXPosition() >= (rect2.getXPosition() + rect2.width)) ||
+        	 ((this.getXPosition() + this.getWidth()) <= rect2.getXPosition()))
       		return false;
 
-   if ((this.getYPosition() > (rect2.getYPosition() + rect2.height)) ||
-         ((this.getYPosition() + rect2.height) < rect2.getYPosition()))
+   if ((this.getYPosition() >= (rect2.getYPosition() + rect2.height)) ||
+         ((this.getYPosition() + this.getHeight()) <= rect2.getYPosition()))
       return false;
    return true;
 }

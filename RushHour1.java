@@ -33,6 +33,7 @@ public class RushHour1
     	p.move("PD3");
     	p.move("OD3");
     	p.move("XR5");
+	p.move("BD3");
     }
 }
 
