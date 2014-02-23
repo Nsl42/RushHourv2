@@ -42,6 +42,24 @@ public class Rectangle
     }
 
     /**
+     * Position getters.
+     */
+    public int getXPosition()
+    {
+       return this.xPosition;
+    }
+    public int getYPostion()
+    {
+       return this.yPosition;
+    }
+    /**
+     * name getter.
+     */
+    public String getText()
+    {
+       return this.text;
+      }
+        /**
      * Make this rectangle visible. If it was already visible, do nothing.
      */
     public void makeVisible()
@@ -69,6 +87,20 @@ public class Rectangle
         draw();
     }
 
+    /**
+     * Checks if the rectangle is overlapping any other Rectangles.
+     */
+    public boolean isOverlapping(Rectangle rect2)
+    {
+   	if ((this getXPosition() > (rect2.getXPosition() + rect2.width)) ||
+        	 ((this.getXPosition() + rectA.width) < rect2.getXPosition()))
+      		return false;
+
+   if ((this.getYPosition() > (rect2.getYPosition() + rect2.height)) ||
+         ((this.getYPosition() + rectA.height) < rect2.getYPosition()))
+      return false;
+   return true;
+}
     /**
      * Move the rectangle vertically by 'distance' pixels.
      */

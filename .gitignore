@@ -1,4 +1,7 @@
 *.class
+*.pdf
+*.autosave
+*.dia
 
 # Package Files #
 *.jar

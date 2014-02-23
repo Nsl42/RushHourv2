@@ -25,7 +25,20 @@ public class Vehicule extends Rectangle
        if (width > height){this.direction = Constants.HORIZONTAL;} //definition de l'orientation du vehicule (HORIZONTAL ou VERTICAL)
        else{this.direction = Constants.VERTICAL;}
     }
-
+	/** Getter method for Direction parameter
+	 * @return char direc the Direction
+	 **/
+    public char getDirection()
+    {
+       return this.direction;
+      }
+	/** Getter method for size parameter
+	 * @return char size the size
+	 **/
+    public char getSize()
+    {
+       return this.size;
+      }
     	/**
 	*appel la methode slowMove de la classe mere en fonction de la direction
 	*pour up et left on doit passer la distance en negatif, car pour aller a gauche on diminu les x et pour monter on diminu les y
