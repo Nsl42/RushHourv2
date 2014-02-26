@@ -12,6 +12,7 @@ public class Player {
 
    private String nom;
    private ArrayList score;
+   private Parking park;
 
    /** Constructor of the Player class
     * uses the name given by the user to find him in the records or create a new player
@@ -81,16 +82,11 @@ public class Player {
    public int getScore (int complexity, int configuration)
    {
       // Finds the position of the score of the level in the ArrayList and returns the value of the score
-      for (int i=0; i<score.size();i+=3)
-      {
+      /*for (int i=0; i<score.size();i+=3)
 	 if (complexity==(int)score.get(i))
-	 {
 	    if((int)score.get(i+1)==configuration)
-	    {
 	       return (int)score.get(i+2);
-	    }
-	 }
-      }
+	       */
       return -1;
    }
 
@@ -121,7 +117,7 @@ public class Player {
       {
 	 e.printStackTrace();
       }
-}
+   }
 
 
    /** Score loader
@@ -162,15 +158,15 @@ public class Player {
     * 
     * @param parking 
     */           
-   public void play(Parking parking)
+   public void play()
    {
       System.out.println("Enter Your Move : ");
       final Scanner sc = new Scanner(System.in);
-      while(parking.getVehicule("X").getXPosition() != 184)
+      while(park.getVehicule("X").getXPosition() != 184)
       {
 	 try{
 	    final String move = sc.nextLine();
-	    parking.move(move);
+	    park.move(move);
 	    System.out.println("Another Move : ");
 	 }catch(Exception e)
 	 {
@@ -180,4 +176,22 @@ public class Player {
       }
 
    }
+
+   /** Method that returns a random level, based on player's score
+    * 
+    * @return int rdLevel The Random level (1..5)
+    */
+   public int randomLevel()
+   {
+      return 2;
+   }
+   /**Method that initiate all the game
+    * 
+    */
+   public void init(int levelChoice, int configChoice)
+   {
+      ParkingFactory pf = new ParkingFactory(levelChoice, configChoice);
+      park = pf.getParking();
+
+   }  
 }

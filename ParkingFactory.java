@@ -72,7 +72,7 @@ public class ParkingFactory {
 	 {
 	    e.printStackTrace();
 	 }
-	//debug
+	//debugu
 	System.out.println("Parsing the config...");
 	 // Parsing the config 
 	 String configArr[] = config.split(" ");
@@ -101,5 +101,13 @@ public class ParkingFactory {
       catch (Exception e){
 	 System.out.println(e.getCause().toString());
       }
+   }
+   /** Method that returns the number of available configs, given a level number
+    * @param int lvlNumber 
+    * @return int nbConf
+    */
+   static public int getNbConfig(int lvlNumber)
+   {
+      return 4;
    }
 }
