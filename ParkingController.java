@@ -20,28 +20,38 @@ public class ParkingController{
    {
       boolean ret = true;
       Vehicule v = this.park.vehicules.get(move.substring(0,1));
+
       //debug
-      System.out.println(" || DIST || ");
-      System.out.println(" Vehi : "+v.getText());
-      System.out.println("   direc : "+v.getDirection()); 
-      System.out.println("   move : "+move.substring(1,2));
-      System.out.println("   dist : " +move.substring(2,3));
-      System.out.println("   move.toString : " +move);
+      //System.out.println(" || DIST || ");
+      //System.out.println(" Vehi : "+v.getText());
+      //System.out.println("   direc : "+v.getDirection()); 
+      //System.out.println("   move : "+move.substring(1,2));
+      //System.out.println("   dist : " +move.substring(2,3));
+      //System.out.println("   move.toString : " +move);
+
+      //Switching on the direction of the vehicle
       switch (v.getDirection())
       {
 	 case Constants.HORIZONTAL:
+	    //Switching on the Direction of the movement
 	    switch (move.substring(1,2))
 	    {
 	       case Constants.LEFT:
+		  // New Coordinates
 		  int newx = v.getXPosition() - Integer.parseInt(move.substring(2,3))*Constants.SQUARE;
+		  // if Out of Boundaries
 		  if(newx < 0)
 		     ret = false;
 		  break;
 	       case Constants.RIGHT:
+		  //X coordinate of the B point of the rectangle
 		  int  bx= v.getXPosition()+(Constants.SQUARE * v.getSize());
+		  // New Coordinates
 		  int newbx = bx + Integer.parseInt(move.substring(2,3))*Constants.SQUARE;
+		  // if Out of Boundaries
 		  if(newbx > Constants.SIZE)
 		     ret = false;
+		  // if the Car is X => Go out of the field by the right means to win the game and is a valid movement
 		  if(move.substring(0,1).equals("X"))
 		     ret = true;
 		  break;
@@ -51,20 +61,26 @@ public class ParkingController{
 	    switch (move.substring(1,2))
 	    {
 	       case Constants.UP:
+		  // New Coordinates
 		  int newy = v.getYPosition() - Integer.parseInt(move.substring(2,3))*Constants.SQUARE;
+		  // if Out of Boundaries
 		  if(newy <0)
 		     ret = false;
 		  break;
 	       case Constants.DOWN:
-		  int  cy= v.getYPosition()+(Constants.SQUARE * v.getSize());
+		  //Y coordinate of the C point of the rectangle
+		  int  cy = v.getYPosition()+(Constants.SQUARE * v.getSize());
+		  // New Coordinates
 		  int newcy = cy + Integer.parseInt(move.substring(2,3))*Constants.SQUARE;
+		  // if Out of Boundaries
 		  if(newcy > Constants.SIZE)
 		     ret = false;
 		  break;
 	    } 
 	    break;
       }
-      System.out.println("returns : " + Boolean.toString(ret));
+      //debug
+      //System.out.println("returns : " + Boolean.toString(ret));
       return ret;
    }
 
@@ -74,16 +90,20 @@ public class ParkingController{
     **/
    public boolean chkDirec(String move)
    {
-      boolean ret;
       Vehicule v = this.park.vehicules.get(move.substring(0,1));
       String order = move.substring(1,2);
       //debug 
- 	System.out.println(" || DIREC ||");
-     System.out.println("vehi : " + v.getDirection());
-     System.out.println("ordre : " + order);
-     ret = (v.getDirection().equals(Constants.HORIZONTAL))?((order.equals(Constants.LEFT)||order.equals(Constants.RIGHT))?true:false):((order.equals(Constants.DOWN)||order.equals(Constants.UP))?true:false);
-     System.out.println("returns : " +Boolean.toString(ret));
-      return ret;
+      //System.out.println(" || DIREC ||");
+      //System.out.println("vehi : " + v.getDirection());
+      //System.out.println("ordre : " + order);
+
+      // Ret = true if (order = left||order == right) && v.getDirection == Horizontal) || ((order = up || order == down) && v.getDirection == Vertical)
+      return (v.getDirection().equals(Constants.HORIZONTAL)) ?
+	 ((order.equals(Constants.LEFT)||order.equals(Constants.RIGHT)) ? true : false)
+	 : ((order.equals(Constants.DOWN)||order.equals(Constants.UP)) ? true : false);
+
+      //debug
+      //System.out.println("returns : " +Boolean.toString(ret));
    }
 
    /**chkCollision ; the Check Collision (With other Cars) method
@@ -94,63 +114,50 @@ public class ParkingController{
    {
       boolean ret = true;
       Vehicule v = this.park.vehicules.get(move.substring(0,1));
-      System.out.println(move);
-      Vehicule ghost = new Vehicule("g", (v.getDirection().equals(Constants.HORIZONTAL))? v.getSize():1,(v.getDirection().equals(Constants.VERTICAL))? v.getSize():1, v.getXPosition()/Constants.SQUARE, v.getYPosition()/Constants.SQUARE, "black");
-
-      //ghost.makeInvisible();
-      //debug
-      System.out.println(" || COLLISIONS || ");
-      System.out.println(" Vehi : "+v.getText());
-      System.out.println("   direc : "+v.getDirection()); 
-      System.out.println("   move : "+move.substring(1,2));
+      // Ghost car creation (for collision-testing purposes)
+      Vehicule ghost = new Vehicule("g", 
+	    (v.getDirection().equals(Constants.HORIZONTAL)) ? v.getSize() : 1,
+	    (v.getDirection().equals(Constants.VERTICAL)) ? v.getSize() : 1,
+	    v.getXPosition()/Constants.SQUARE, v.getYPosition()/Constants.SQUARE, "black");
+      ghost.makeInvisible();
+      //Keys preparation for HashTable-fetching
       Set<String> keys = park.vehicules.keySet();
+
+      //debug
+      //System.out.println(" || COLLISIONS || ");
+      //System.out.println(" Vehi : "+v.getText());
+      //System.out.println("   direc : "+v.getDirection()); 
+      //System.out.println("   move : "+move.substring(1,2));
+
       switch(v.getDirection())
       {
 	 case Constants.VERTICAL:
 	    switch(move.substring(1,2))
 	    {
 	       case Constants.UP:
-	       ///debug
-     System.out.println("vehi : " + v.getDirection());
-     System.out.println("ordre : " + move.substring(1,2));
+		  // For each tile,
 		  for(int i = 1; i <= Integer.parseInt(move.substring(2,3)); i++)
 		  {
+		     // Moving the Ghost
 		     ghost.moveVertical(-1*Constants.SQUARE);
+		     // For each other car of the playground
 		     for( String key : keys)
-		     {
-			System.out.println(Boolean.toString(ghost.isOverlapping(park.vehicules.get(key)) && v.getText() != park.vehicules.get(key).getText()));
+			// If Rectangle.isOverLapping(Vehicule);
 			if(ghost.isOverlapping(park.vehicules.get(key)) && v.getText() != park.vehicules.get(key).getText())
-			{
-			   //debug
-			   System.out.println("ghost : X " + ghost.getXPosition() + ", Y " + ghost.getYPosition());
-			   System.out.println(park.vehicules.get(key).getText() + " : X " + park.vehicules.get(key).getXPosition() + ", Y " + park.vehicules.get(key).getYPosition());
 			   ret = false;
-			}
-		     }
 		  }
 		  break;
 	       case Constants.DOWN:
-	       ///debug
-     System.out.println("vehi : " + v.getDirection());
-     System.out.println("ordre : " + move.substring(1,2));
+		  // For each tile,
 		  for(int i = 1; i <= Integer.parseInt(move.substring(2,3)); i++)
 		  {
+		     // Moving the Ghost
 		     ghost.moveVertical(Constants.SQUARE);
+		     // For each other car of the playground
 		     for(String key : keys)
-		     {
-			   //debug
-			   System.out.println("ghost : X " + ghost.getXPosition() + ", Y " + ghost.getYPosition());
-			   System.out.println(park.vehicules.get(key).getText() + " : X " + park.vehicules.get(key).getXPosition() + ", Y " + park.vehicules.get(key).getYPosition());
-
-			System.out.println(Boolean.toString(ghost.isOverlapping(park.vehicules.get(key)) && v.getText() != park.vehicules.get(key).getText()));
+			// If Rectangle.isOverLapping(Vehicule);
 			if(ghost.isOverlapping(park.vehicules.get(key)) && v.getText() != park.vehicules.get(key).getText())
-			{
-			   //debug
-			   System.out.println("ghost : X " + ghost.getXPosition() + ", Y " + ghost.getYPosition());
-			   System.out.println(park.vehicules.get(key).getText() + " : X " + park.vehicules.get(key).getXPosition() + ", Y " + park.vehicules.get(key).getYPosition());
 			   ret = false;
-			}
-		     }
 		  }
 		  break;
 	    }
@@ -159,53 +166,36 @@ public class ParkingController{
 	    switch(move.substring(1,2))
 	    {
 	       case Constants.LEFT:
-	       ///debug
-     System.out.println("vehi : " + v.getDirection());
-     System.out.println("ordre : " + move.substring(1,2));
-		  for(int i = 1; i < Integer.parseInt(move.substring(2,3)); i++)
+		  // For each tile,
+		  for(int i = 1; i <= Integer.parseInt(move.substring(2,3)); i++)
 		  {
-		     ghost.moveHorizontal(-i*Constants.SQUARE);
+		     // Moving the Ghost
+		     ghost.moveHorizontal(-1*Constants.SQUARE);
+		     // For each other car of the playground
 		     for(String key : keys)
-		     {
-			System.out.println(Boolean.toString(ghost.isOverlapping(park.vehicules.get(key)) && v.getText() != park.vehicules.get(key).getText()));
+			// If Rectangle.isOverLapping(Vehicule);
 			if(ghost.isOverlapping(park.vehicules.get(key)) && v.getText() != park.vehicules.get(key).getText())
-			{
-			   //debug
-			   System.out.println("ghost : X " + ghost.getXPosition() + ", Y " + ghost.getYPosition());
-			   System.out.println(park.vehicules.get(key).getText() + " : X " + park.vehicules.get(key).getXPosition() + ", Y " + park.vehicules.get(key).getYPosition());
 			   ret = false;
-			}
-		     }
-		     ghost.moveHorizontal(i*Constants.SQUARE);
 		  }
 		  break;
 	       case Constants.RIGHT:
-	       ///debug
-     System.out.println("vehi : " + v.getDirection());
-     System.out.println("ordre : " + move.substring(1,2));
-		  for(int i = 1; i < Integer.parseInt(move.substring(2,3)); i++)
+		  // For each tile,
+		  for(int i = 1; i <= Integer.parseInt(move.substring(2,3)); i++)
 		  {
-		     ghost.moveHorizontal(i*Constants.SQUARE);
+		     // Moving the Ghost
+		     ghost.moveHorizontal(Constants.SQUARE);
+		     // For each other car of the playground
 		     for(String key : keys)
-		     {
-			System.out.println(Boolean.toString(ghost.isOverlapping(park.vehicules.get(key)) && v.getText() != park.vehicules.get(key).getText()));
+			// If Rectangle.isOverLapping(Vehicule);
 			if(ghost.isOverlapping(park.vehicules.get(key)) && v.getText() != park.vehicules.get(key).getText())
-			{
-			   //debug
-			   System.out.println("ghost : X " + ghost.getXPosition() + ", Y " + ghost.getYPosition());
-			   System.out.println(park.vehicules.get(key).getText() + " : X " + park.vehicules.get(key).getXPosition() + ", Y " + park.vehicules.get(key).getYPosition());
 			   ret = false;
-			}
-		     }
-		     ghost.moveHorizontal(-i*Constants.SQUARE);
 		  }
 		  break;
 	    }
 	    break;
       }
       //debug
-      
-      System.out.println("returns : " + Boolean.toString(ret));
+      //System.out.println("returns : " + Boolean.toString(ret));
       return ret;
    }
 }

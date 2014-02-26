@@ -43,7 +43,8 @@ public class Parking
    /**
     *appel les methodes permettant le deplacement d'un vehicule
     */
-   public void move(String deplacement){
+   public void move(String deplacement)
+   {
       char [] tab = deplacement.toCharArray(); //division du string en un tableau de char
       //recuperation de l'objet vehicule par son nom puis appel de la methode move de cet objet
       //les parametres de ces methodes passe de char a String ou int via les methodes de la classe Character
