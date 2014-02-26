@@ -66,7 +66,8 @@ public class RushHour2 {
       {
 	 try{
 	    //TODO : ParkingFactory.getNbConfig()
-	    nbConfig = ParkingFactory.getNbConfig(levelChoice);	
+	    ParkingFactory parkFact = ParkingFactory.getParkingFactory();
+	    nbConfig = parkFact.getNbConfig(levelChoice);	
 	 }catch(Exception e)
 	 {
 	    System.out.println("Entree utilisateur illegale detectee.");
@@ -90,15 +91,12 @@ public class RushHour2 {
 	    }
 	 }while(lock);
       }else
-	 configChoice = rd.nextInt(nbConfig);
+	 configChoice = rd.nextInt(nbConfig) + 1;
 
-      // Game Initialisation
-      player.init(levelChoice, configChoice);
       // Actual game
-      player.play();
+      player.play(levelChoice, configChoice);
       // Victory !!
       System.out.println("-------------------- VICTORY !! --------------------");
-      player.save();
       System.out.println(" Score Saved !!");
       System.out.println("Bye bye :) !!");
    }

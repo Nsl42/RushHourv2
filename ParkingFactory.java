@@ -5,109 +5,134 @@ import java.io.FileReader;
 
 
 public class ParkingFactory {
-   private Parking parking;
 
-   public ParkingFactory(int numNiveau, int configuration)
+   private static ParkingFactory parkingFactorySingleton;
+
+   private Parking parking;
+   private ArrayList<ArrayList<Position>>[] ArrConfs;
+   private ArrayList<String> ArrCars;
+
+   public static ParkingFactory getParkingFactory()
    {
-      parking = new Parking(); 
-      chargerFichier(numNiveau, configuration);
+      if(parkingFactorySingleton == null)
+	 parkingFactorySingleton = new ParkingFactory();
+
+      return parkingFactorySingleton;
    }
+
+
+
+   private ParkingFactory()
+   {
+
+      loadfiles();
+   }
+
+   public Parking createPark(int levelChoice, int configChoice)
+   {
+      Parking park = new Parking();
+      ArrayList<Position> selectedConfig = ArrConfs[levelChoice-1].get(configChoice - 1);
+      for(Position pos: selectedConfig)
+      {
+	 String carData = "";
+	 for(String data: ArrCars)
+	    if (pos.car.equals(data.substring(0,1)))
+	       carData = data;
+
+	 park.addVehicule(pos.car, 
+	       (pos.direction.equals(Constants.HORIZONTAL))? Constants.SQUARE * Integer.parseInt(carData.substring(2,3)) : Constants.SQUARE,
+	       (pos.direction.equals(Constants.VERTICAL))? Constants.SQUARE * Integer.parseInt(carData.substring(2,3)) : Constants.SQUARE,
+	       pos.posX, pos.posY, carData.substring(3));
+      }
+	 return park;
+   }
+
 
    public Parking getParking()
    {
       return parking;
    }
 
-   public void chargerFichier(int numNiveau, int configuration)
+   private void loadfiles()
    {
-      System.out.println("Vous avez choisi la difficulté " + numNiveau + " et la configuration " + configuration);
-      String niveau = ((numNiveau == 1) ? "1-beginner" : ((numNiveau == 2) ? "2-intermediate" : ((numNiveau == 3) ? "3-" +
-		  "advanced" : ((numNiveau == 4) ? "4-expert" : "5-grandmaster"))));
-      try{
-	 int i;
-	 int tableauScore[] = {};
+      this.ArrConfs = loadConfs();
+      this.ArrCars = loadCars();
+   }
+
+
+   static private ArrayList<ArrayList<Position>>[] loadConfs()
+   {
+      String niveau = "";
+
+      ArrayList<ArrayList<Position>> lvl[] = (ArrayList<ArrayList<Position>>[])new ArrayList[5];
+
+      for(int i = 1; i < 6; i++)
+      {
+	 lvl[i-1] = new ArrayList<ArrayList<Position>>();
+	 niveau = ((i == 1) ? "1-beginner" : 
+	       		((i == 2) ? "2-intermediate" : 
+			 	((i == 3) ? "3-advanced" : 
+				 	((i == 4) ? "4-expert" : "5-grandmaster"))));
 	 //debug
 	 System.out.println("LECTURE");	
 	 System.out.println("niveaux/" + niveau + ".cfg");
 	 String line;
 	 // Lecture du fichier du niveau concerné
+	 try{
 	 BufferedReader nivbr = new BufferedReader(new FileReader("niveaux/" + niveau + ".cfg"));
-	 try {
-	    line = nivbr.readLine();
-	    for(int j = 0; j<numNiveau-1;j++)
-	       nivbr.readLine();
-	 }catch(Exception e)
+	 while((line = nivbr.readLine()) != null)
 	 {
-	    e.printStackTrace();
-	 }
-	 String config = nivbr.readLine();
-
-	 // ---------------------------------------------------------------------------------------------
-	 /*
-	    InputStream ips=new FileInputStream("niveaux/" + niveau + ".cfg"); // Le chemin relatif est buggé
-	    InputStreamReader ipsr=new InputStreamReader(ips);
-	    BufferedReader nivbr=new BufferedReader(ipsr);
-	    String value;
-	    while ((value = nivbr.readLine())!=null){
-	    if(i+1 == numNiveau)
+	    ArrayList<Position> confs = new ArrayList<Position>();
+	    String temp_line[] = line.split(" ");
+	    for(int j = 1; j < temp_line.length; j++)
 	    {
-	    ligne = value;
+	       Position pos = new Position(temp_line[i]);
+	       confs.add(pos);
 	    }
-	    }*/
+	    lvl[i-1].add(confs);
+
+	 }
 	 nivbr.close(); 
-
-	 //debug
-	 System.out.println("toto");
-	 BufferedReader vehibr = new BufferedReader(new FileReader("niveaux/vehicles.dat"));
-	 ArrayList<String> lines = new ArrayList<String>();
-	 try {
-	    line = vehibr.readLine();
-	    while(line != null)
-	    {  lines.add(line);
-	       //debug
-	       System.out.println(line);
-	       line = vehibr.readLine();
-	    }
 	 }catch(Exception e)
 	 {
+	    System.out.println("Erreur de lecture des fichiers de configuation...");
 	    e.printStackTrace();
-	 }
-	//debugu
-	System.out.println("Parsing the config...");
-	 // Parsing the config 
-	 String configArr[] = config.split(" ");
-
-	System.out.println("ForEach Line...");
-	 // Parsing the config 
-	 // For each Line of the Vehicules config
-	 for(String myline : lines)
-	 {
-	    for(i = 0; i < configArr.length; i++)
-	    {
-	       //debug
-	       System.out.println(configArr[i].substring(0,1) + " .. " + myline.substring(0,1));
-	       if(configArr[i].substring(0,1).equals(myline.substring(0,1)))
-	       {						
-		  // On add la voiture
-		  int width = configArr[i].substring(1,2).equals(Constants.HORIZONTAL) ? Integer.parseInt(myline.substring(1,2)) : 1;
-		  int height = configArr[i].substring(1,2).equals(Constants.VERTICAL) ? Integer.parseInt(myline.substring(1,2)) : 1;
-		//debug
-		System.out.println(configArr[i].substring(0,1));
-		  parking.addVehicule(configArr[i].substring(0,1), width, height, Integer.parseInt(configArr[i].substring(2,3)),Integer.parseInt(configArr[i].substring(3,4)), myline.substring(2));
-	       }
-	    }
-	 }
-      }		
-      catch (Exception e){
-	 System.out.println(e.getCause().toString());
+	    System.out.println("Arrêt du programme...");
+	    System.exit(1);
+	  }
       }
+      return lvl;
    }
+
+   static public  ArrayList<String> loadCars()
+   {
+      String line = "";
+      ArrayList<String> lines = new ArrayList<String>();
+      try {
+      BufferedReader vehibr = new BufferedReader(new FileReader("niveaux/vehicles.dat"));
+	 line = vehibr.readLine();
+	 while(line != null)
+	 {  lines.add(line);
+	    //debug
+	    System.out.println(line);
+	    line = vehibr.readLine();
+	 }
+	 }catch(Exception e)
+	 {
+	    System.out.println("Erreur de lecture des fichiers de configuation...");
+	    System.out.println("Arrêt du programme...");
+	    System.exit(1);
+	  }
+      return lines;
+   }
+
    /** Method that returns the number of available configs, given a level number
     * @param int lvlNumber 
     * @return int nbConf
     */
-   static public int getNbConfig(int lvlNumber)
+   public int getNbConfig(int lvlNumber)
    {
-      return 4;
+      return this.ArrConfs[lvlNumber - 1].size();
    }
 }
+

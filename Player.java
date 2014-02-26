@@ -7,191 +7,166 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+public class Player{
+   private static final String SCORE_PATH = "saves/";
 
-public class Player {
-
-   private String nom;
-   private ArrayList score;
-   private Parking park;
+   private String name;
+   private ArrayList<int[]> scores;
 
    /** Constructor of the Player class
-    * uses the name given by the user to find him in the records or create a new player
-    * @param name 
+    * uses the name given by the user and try to load his scores
+    * from a file previously saved. 
+    * @param name player's name. Use as name for the save file.
     */
-   public Player (String name)
+   public Player(String name)
    {
-      nom=name;
+      this.name = name;
       load();
    }
 
-
-   /** Score setter
-    * Tests the existence of a score for the level and compares the two scores to actualize the score if necessary
-    * @param complexity
-    * @param configuration
-    * @param score 
+   /**
+    * Score setter.
+    * Tests the existence of a score for the level and compares
+    * the two scores to actualize the score if necessary, unless
+    * the newScore equals to -1. In this case do nothing.
+    * @param lvl
+    * @param config
+    * @param newScore the score to save. 
     */
-   public void setScore (int complexity, int configuration, int newscore)
+   public void setScore(int lvl, int config, int newScore)
    {
-      // Finds the position of the score of the level before the one you want to register in the ArrayList
-      int position=-3;
-      boolean exists=false;
-      for (int i=0; i<score.size(); i+=3)
-      {
-	 if (complexity>=(int)score.get(i))
-	 {
-	    if((int)score.get(i+1)<configuration)
-	    {
-	       position=i;
-	    }
-	    if ((int)score.get(i+1)==configuration)
-	    {
-	       exists=true;
-	    }
-	 }
-      }
+      if (newScore == -1) return; // do not save score equals to -1.
+
       // If the level doesn't exist , the score will be created
-      if (!exists)
-      {
-	 score.add(position+3,newscore);
-	 score.add(position+3,configuration);
-	 score.add(position+3,complexity);
-      }
-      // Overwise, if the new score is greater than the ancient, the ancient will be erased and the new will be registered
+      if (this.getScore(lvl, config) == -1)
+         this.scores.add(new int[]{lvl, config, newScore});
+      // Overwise, if the new score is greater than the ancient,
+      // the ancient will be erased and the new will be registered
       else
-      {
-	 if ((int)score.get(position+5)<newscore)
-	 {
-	    score.remove(position+3);
-	    score.remove(position+3);
-	    score.remove(position+3);
-	    score.add(position+3,newscore);
-	    score.add(position+3,configuration);
-	    score.add(position+3,complexity);
-	 }
-      }
+         for (int[] arr : this.scores)
+            if (arr[0] == lvl && arr[1] == config && arr[3] > newScore)
+            {
+               this.scores.add(this.scores.indexOf(arr),
+                     new int[]{lvl, config, newScore});
+               break;
+            }
+
+      this.save();
    }
 
-
-   /** Score getter
-    * Finds the score and displays it (-1 if not existing)
-    * @param complexity
-    * @param configuration
-    * @return 
+   /**
+    * Score getter.
+    * @param lvl
+    * @param config
+    * @return the corresponding score or -1 if it doesn't exist.
     */
-   public int getScore (int complexity, int configuration)
+   public int getScore(int lvl, int config)
    {
-      // Finds the position of the score of the level in the ArrayList and returns the value of the score
-      /*for (int i=0; i<score.size();i+=3)
-	 if (complexity==(int)score.get(i))
-	    if((int)score.get(i+1)==configuration)
-	       return (int)score.get(i+2);
-	       */
+      for (int[] arr : this.scores)
+         if (arr[0] == lvl && arr[1] == config)
+            return arr[2];
       return -1;
    }
 
 
-   /** Score saver
+   /**
+    * Score saver.
     * Save the scores of the player in his attributed file
     */
-   public void save ()
+   private void save ()
    {
-      try
-      {
-	 File f =  new File(nom);
-	 // Convert the score ArrayList to a suitable String in order to write it in the player's file
-	 String temp = "";
-	 for (int i=0; i<score.size(); i+=3)
-	 {
-	    for (int j=0; j<3; j++)
-	    {
-	       temp += score.get(i+j) + "-";
-	    }
-	    temp += " ";
-	 }
-	 // Rewrite the file
-	 BufferedWriter writer = new BufferedWriter(new FileWriter(f));
-	 writer.write(temp);
+      BufferedWriter f;
+      try {
+         f = new BufferedWriter(new FileWriter(Player.SCORE_PATH + this.name));
+         for (int[] arr : this.scores)
+         {
+            for (int i = 0, c = arr.length; i < c; ++i)
+               f.write(arr[i] + " ");
+            f.newLine();
+         }
+         f.close();
       }
       catch (IOException e)
       {
-	 e.printStackTrace();
+         e.printStackTrace();
       }
    }
 
 
-   /** Score loader
-    * Loads the scores of the player from his attributed file to the score ArrayList
+   /**
+    * Score loader.
+    * Loads the scores of the player from
+    * his attributed file to the score ArrayList
     */
-   public void load ()
+   private void load ()
    {
-      try
-      {
-	 File f =  new File(nom);
-	 // Tests the existence of the player's file
-	 if (f.exists())
-	 {
-	    //Reads the file
-	    BufferedReader reader = new BufferedReader(new FileReader(f));
-	    String scores = reader.readLine();
-	    //Splits the scores string in levels
-	    String record[]=scores.split(" ");
-	    //Splits the record string array in complexity, configuration and score and puts the values int the score ArrayList
-	    for (int i=0; i<record.length; i++)
-	    {
-	       String temp[]=record[i].split("-");
-	       for (int j=0; j<temp.length; j++)
-	       {
-		  score.add(temp[j]);
-	       }
+      this.scores = new ArrayList<int[]>();
+      // Stop if file doesn't exist.
+      if (! (new java.io.File(SCORE_PATH + this.name).isFile())) return;
 
-	    }
-	 }
-      }
-      catch (IOException e)
-      {
-	 e.printStackTrace();
+      String line;
+      BufferedReader f;
+      try {
+         f = new BufferedReader(new FileReader(Player.SCORE_PATH + this.name));
+         while ((line = f.readLine()) != null)
+         {
+            final String[] score = line.split(" ");
+            this.scores.add(new int[]{
+                  Integer.parseInt(score[0]),
+                  Integer.parseInt(score[1]),
+                  Integer.parseInt(score[2])
+            });
+         }
+         f.close();
+      } catch (IOException e) {
+         e.printStackTrace();
       }
    }
 
-   /** Method that executes the game itself
+   /**
+    * Method that executes the game itself
     * 
-    * @param parking 
-    */           
-   public void play()
+    */
+   public int play(int levelChoice, int configChoice)
    {
-      System.out.println("Enter Your Move : ");
+      ParkingFactory pf = ParkingFactory.getParkingFactory(); 
+      final Parking park = pf.getParking();
+
+      System.out.print("Enter Your Move : ");
       final Scanner sc = new Scanner(System.in);
-      while(park.getVehicule("X").getXPosition() != 184)
+      int score = 0;
+      while(park.getVehicule("X").getXPosition() <= 184)
       {
-	 try{
-	    final String move = sc.nextLine();
-	    park.move(move);
-	    System.out.println("Another Move : ");
-	 }catch(Exception e)
-	 {
-	    System.out.println("Illegal Move !!");
-	    System.out.println("Another Move : ");
-	 } 
+         if (!sc.hasNextLine())
+         {
+            System.out.println("exit");
+            return -1;
+         }
+         final String move = sc.nextLine().trim().toUpperCase();
+         if ("EXIT".equals(move))
+         {
+            System.out.println("exit");
+            return -1;
+         }
+         try{
+            park.move(move);
+            ++score;
+         }catch(Exception e)
+         {
+            System.out.println("Illegal Move !!");
+         } finally {
+            System.out.println("Another Move : ");
+         }
       }
-
+      return score;
    }
 
-   /** Method that returns a random level, based on player's score
-    * 
+   /**
+    * Method that returns a random level, based on player's score
     * @return int rdLevel The Random level (1..5)
     */
    public int randomLevel()
    {
       return 2;
    }
-   /**Method that initiate all the game
-    * 
-    */
-   public void init(int levelChoice, int configChoice)
-   {
-      ParkingFactory pf = new ParkingFactory(levelChoice, configChoice);
-      park = pf.getParking();
-
-   }  
 }
